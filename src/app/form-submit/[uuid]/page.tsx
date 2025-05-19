@@ -1,23 +1,19 @@
 "use client";
 
+import { useFetchFormById } from "@/apis/workers";
 import {
   Box,
-  Typography,
-  Paper,
-  Chip,
-  Divider,
-  Button,
-  Grid,
   CircularProgress,
   Container,
+  Divider,
+  Grid,
+  Paper,
+  Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useParams, useRouter } from "next/navigation";
-import { useFetchFormById } from "@/apis/workers";
 import dayjs from "dayjs";
+import { useParams } from "next/navigation";
 
 export default function FormSubmitSinglePage() {
-  const router = useRouter();
   const { uuid } = useParams() as { uuid: string };
   const { data: profile, isLoading, isError } = useFetchFormById(uuid);
 

@@ -44,26 +44,13 @@ export const useFetchFormById = (uuid: string) => {
   });
 };
 
-// Fetch form count
-export const useFetchFormCount = () => {
-  return useQuery<any>({
-    queryKey: QUERY_KEYS.forms.count,
-    queryFn: async () => {
-      const res = await axiosGet<ApiResponse<any>>(
-        HEALTH_WORKER_ENDPOINT.formCount
-      );
-      return res.data.body;
-    },
-  });
-};
-
 // --- Mutations ---
 
 // Create a new form
 export const useCreateForm = () => {
   return useMutation<Form, Error, CreateFormInput>({
     mutationKey: QUERY_KEYS.forms.create,
-    mutationFn: async (params) => {
+    mutationFn: async (params: any) => {
       const res = await axiosPost<ApiResponse<Form>>(
         HEALTH_WORKER_ENDPOINT.postForm,
         params
@@ -79,7 +66,7 @@ export const useCreateForm = () => {
 export const useSyncForm = () => {
   return useMutation<Form, Error, CreateFormInput>({
     mutationKey: QUERY_KEYS.forms.create,
-    mutationFn: async (params) => {
+    mutationFn: async (params: any) => {
       const res = await axiosPost<ApiResponse<Form>>(
         HEALTH_WORKER_ENDPOINT.formBulk,
         params

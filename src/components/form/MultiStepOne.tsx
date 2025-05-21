@@ -19,14 +19,16 @@ interface Props {
 }
 
 const validationSchema = Yup.object({
-  familyId: Yup.string().required("Required"),
-  cohort: Yup.string().required("Required"),
-  firstName: Yup.string().required("Required"),
-  lastName: Yup.string().required("Required"),
-  dob: Yup.date().required("Required"),
-  age: Yup.number().required("Required").min(0),
-  gender: Yup.string().required("Required"),
-  state: Yup.string().required("Required"),
+  familyId: Yup.string().required("Please provide family ID"),
+  cohort: Yup.string().required("Please select cohort"),
+  firstName: Yup.string().required("Please provide first name"),
+  lastName: Yup.string().required("Please provide last name"),
+  dob: Yup.date().required("Please select date of birth"),
+  age: Yup.number()
+    .min(0, "Age must be more than 0")
+    .max(10, "Age must not be more than 10"),
+  gender: Yup.string().required("Please select a gender"),
+  state: Yup.string().required("Please select a state"),
 });
 
 const MultiStepFormOne: React.FC<Props> = ({ data, onNext }) => {
@@ -62,9 +64,9 @@ const MultiStepFormOne: React.FC<Props> = ({ data, onNext }) => {
                 error={touched.cohort && Boolean(errors.cohort)}
                 helperText={touched.cohort && errors.cohort}
               >
-                <MenuItem value="2022-23">2022-2023</MenuItem>
-                <MenuItem value="2023-24">2023-2024</MenuItem>
-                <MenuItem value="2024-25">2024-2025</MenuItem>
+                <MenuItem value="2022-23">2022-23</MenuItem>
+                <MenuItem value="2023-24">2023-24</MenuItem>
+                <MenuItem value="2024-25">2024-25</MenuItem>
               </TextField>
 
               <TextField
@@ -130,13 +132,18 @@ const MultiStepFormOne: React.FC<Props> = ({ data, onNext }) => {
               </TextField>
 
               <TextField
+                select
                 name="state"
                 label="State"
                 value={values.state}
                 onChange={handleChange}
                 error={touched.state && Boolean(errors.state)}
                 helperText={touched.state && errors.state}
-              />
+              >
+                <MenuItem value="karnataka">Karnataka</MenuItem>
+                <MenuItem value="madhya pradesh">Madhya Pradesh</MenuItem>
+                <MenuItem value="uttar pradesh">Uttar Pradesh</MenuItem>
+              </TextField>
 
               <Button type="submit" variant="contained">
                 Continue

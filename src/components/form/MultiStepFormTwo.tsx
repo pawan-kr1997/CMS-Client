@@ -11,6 +11,7 @@ import {
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { VaccinationDetails } from "./MultiStepForm";
+import { useRef } from "react";
 
 interface Props {
   isPending: boolean;
@@ -20,12 +21,22 @@ interface Props {
 }
 
 const validationSchema = Yup.object({
-  vaccinationStatus: Yup.string().required("Required"),
-  height: Yup.number().required("Required").min(1),
-  weightKg: Yup.number().required("Required").min(0),
-  weightGrams: Yup.number().required("Required").min(0),
-  bmi: Yup.number().required("Required"),
-  nutritionStatus: Yup.string().required("Required"),
+  vaccinationStatus: Yup.string().required(
+    "Please select a vaccination status"
+  ),
+  height: Yup.number()
+    .required("Please provide height")
+    .min(1, "Please provide valid height"),
+  weightKg: Yup.number()
+    .required("Please provide weight")
+    .min(0, "Please provide valid weight"),
+  weightGrams: Yup.number()
+    .required("Please provide weight")
+    .min(0, "Please provide valid weight"),
+  bmi: Yup.number()
+    .required("Please provide BMI")
+    .min(1, "Please provide valid BMI"),
+  nutritionStatus: Yup.string().required("Please select nutrition status"),
 });
 
 const MultiStepFormTwo: React.FC<Props> = ({
@@ -34,6 +45,8 @@ const MultiStepFormTwo: React.FC<Props> = ({
   onSubmit,
   onSaveDraft,
 }) => {
+  const actionRef = useRef("submit");
+
   const calculateBMI = (
     values: VaccinationDetails,
     setFieldValue: FormikHelpers<VaccinationDetails>["setFieldValue"]
@@ -60,7 +73,14 @@ const MultiStepFormTwo: React.FC<Props> = ({
         initialValues={data}
         validationSchema={validationSchema}
         enableReinitialize={true}
-        onSubmit={(values) => onSubmit(values)}
+        onSubmit={(values) => {
+          if (actionRef.current === "draft") {
+            onSaveDraft(values);
+          }
+          if (actionRef.current === "submit") {
+            onSubmit(values);
+          }
+        }}
       >
         {({ values, handleChange, setFieldValue, touched, errors }) => (
           <Form>
@@ -162,8 +182,10 @@ const MultiStepFormTwo: React.FC<Props> = ({
                 <Button
                   fullWidth
                   disabled={isPending}
-                  onClick={() => onSaveDraft(values)}
-                  type="button"
+                  onClick={() => {
+                    actionRef.current = "draft";
+                  }}
+                  type="submit"
                   variant="outlined"
                 >
                   Save Draft
@@ -172,6 +194,9 @@ const MultiStepFormTwo: React.FC<Props> = ({
                   fullWidth
                   disabled={isPending}
                   disableElevation
+                  onClick={() => {
+                    actionRef.current = "submit";
+                  }}
                   type="submit"
                   variant="contained"
                 >

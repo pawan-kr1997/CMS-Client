@@ -26,6 +26,7 @@ export interface Form {
 
 // Input for creating a form
 export interface CreateFormInput {
+  uuid?: string;
   familyId: string;
   cohort: string;
   firstName: string;

@@ -64,10 +64,10 @@ export const useCreateForm = () => {
 };
 
 export const useSyncForm = () => {
-  return useMutation<Form, Error, CreateFormInput>({
+  return useMutation<Form, Error, { forms: CreateFormInput[] }>({
     mutationKey: QUERY_KEYS.forms.create,
-    mutationFn: async (params: any) => {
-      const res = await axiosPost<ApiResponse<Form>>(
+    mutationFn: async (params) => {
+      const res = await axiosPost<{ forms: CreateFormInput[] }>(
         HEALTH_WORKER_ENDPOINT.formBulk,
         params
       );

@@ -1,11 +1,10 @@
 "use client";
 
-import { Form } from "@/types";
+import { CreateFormInput } from "@/types";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Box,
   Button,
-  Chip,
   Container,
   Divider,
   Grid,
@@ -19,17 +18,20 @@ import { useEffect, useState } from "react";
 export default function FormSyncSinglePage() {
   const router = useRouter();
   const { uuid } = useParams() as { uuid: string };
-  const [profile, setProfile] = useState<Form | null>(null);
+  const [profile, setProfile] = useState<CreateFormInput | null>(null);
 
   useEffect(() => {
+    console.log("iinside");
     const data = localStorage.getItem("formDrafts");
 
     if (data) {
-      const parsed: Form[] = JSON.parse(data);
+      const parsed: CreateFormInput[] = JSON.parse(data);
       const matchingProfile = parsed.find((item) => item.uuid === uuid);
       setProfile(matchingProfile || null);
     }
   }, [uuid]);
+
+  console.log("Profile", profile);
 
   if (!profile) {
     return (
@@ -72,7 +74,7 @@ export default function FormSyncSinglePage() {
         <Divider sx={{ mb: 4 }} />
 
         {/* Basic Info */}
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 0, md: 4 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <Field
               label="Full Name"
@@ -92,46 +94,33 @@ export default function FormSyncSinglePage() {
             <Field label="Height" value={`${profile.height} cm`} />
             <Field
               label="Weight"
-              value={`${(profile.weight / 1000).toFixed(2)} kg`}
+              value={`${(
+                Number(profile.weightKg) +
+                Number(profile.weightGrams) / 1000
+              ).toFixed(2)} kg`}
             />
-            <Field label="BMI" value={profile.bmi.toFixed(1)} />
+            <Field label="BMI" value={Number(profile.bmi).toFixed(1)} />
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 5 }} />
+        <Divider sx={{ my: 2 }} />
 
         {/* Status Info */}
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 0, md: 4 }}>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="subtitle1" fontWeight={600}>
-              Nutrition Status
-            </Typography>
-            <Chip
-              label={capitalize(profile.nutritionStatus)}
-              color={profile.nutritionStatus === "poor" ? "error" : "success"}
-              variant="filled"
-              sx={{ mt: 1 }}
+            <Field
+              label="Vaccination Status"
+              value={profile.vaccinationStatus}
             />
+            <Field label="Nutrition Status" value={profile.nutritionStatus} />
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="subtitle1" fontWeight={600}>
-              Vaccination Status
-            </Typography>
-            <Typography variant="body1" sx={{ mt: 1 }}>
-              {capitalize(profile.vaccinationStatus)}
-            </Typography>
-          </Grid>
-
-          <Grid size={12}>
-            <Typography variant="subtitle1" fontWeight={600}>
-              Enrolled in Feeding Program
-            </Typography>
-            <Chip
-              label={profile.enrolledFeedingProgram ? "Yes" : "No"}
-              color={profile.enrolledFeedingProgram ? "success" : "default"}
-              variant="filled"
-              sx={{ mt: 1 }}
+            <Field
+              label="Feeding program status"
+              value={
+                profile.enrolledFeedingProgram ? "Enrolled" : "Not Enrolled"
+              }
             />
           </Grid>
         </Grid>
@@ -151,7 +140,11 @@ const Field = ({ label, value }: { label: string; value: string | number }) => (
     >
       {label}
     </Typography>
-    <Typography variant="body1" color="text.primary">
+    <Typography
+      variant="body1"
+      color="text.primary"
+      textTransform={"capitalize"}
+    >
       {value}
     </Typography>
   </Box>

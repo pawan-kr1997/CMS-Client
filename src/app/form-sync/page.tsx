@@ -91,10 +91,10 @@ export default function FormSyncPage() {
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          mb={3}
+          mb={1}
         >
           <Typography variant="h4" fontWeight={700} color="text.primary">
-            Form Sync Page
+            Saved Forms
           </Typography>
           <Button
             variant="contained"
@@ -107,7 +107,7 @@ export default function FormSyncPage() {
         </Box>
 
         <Typography variant="subtitle1" color="text.primary" mb={4}>
-          List of all the forms waiting to be synced with the server.
+          List of all the saved forms
         </Typography>
 
         <Box textAlign="center" my={2}>
@@ -117,7 +117,7 @@ export default function FormSyncPage() {
             size="large"
             onClick={handleSyncData}
           >
-            Sync Data
+            Upload Data
           </Button>
         </Box>
 
@@ -138,6 +138,7 @@ export default function FormSyncPage() {
                 id={form.uuid}
                 firstName={form.firstName}
                 lastName={form.lastName}
+                cohort={form.cohort}
                 age={form.age}
                 gender={form.gender}
                 state={form.state}

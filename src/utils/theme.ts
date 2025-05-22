@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 const theme = createTheme({
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: { light: true, dark: false },
   cssVariables: {
     colorSchemeSelector: "class",
   },

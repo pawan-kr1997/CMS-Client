@@ -57,7 +57,7 @@ const MultiStepForm: React.FC = () => {
     vaccinationStatus: "",
     height: "",
     weightKg: "",
-    weightGrams: "0",
+    weightGrams: "",
     bmi: "",
     nutritionStatus: "",
     enrolledFeedingProgram: false,

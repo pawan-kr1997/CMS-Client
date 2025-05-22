@@ -8,10 +8,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Formik, Form, FormikHelpers } from "formik";
+import { Form, Formik } from "formik";
+import { useEffect, useRef } from "react";
 import * as Yup from "yup";
 import { VaccinationDetails } from "./MultiStepForm";
-import { useRef } from "react";
 
 interface Props {
   isPending: boolean;
@@ -47,22 +47,6 @@ const MultiStepFormTwo: React.FC<Props> = ({
 }) => {
   const actionRef = useRef("submit");
 
-  const calculateBMI = (
-    values: VaccinationDetails,
-    setFieldValue: FormikHelpers<VaccinationDetails>["setFieldValue"]
-  ) => {
-    const weight =
-      Number(values.weightKg || 0) + Number(values.weightGrams || 0) / 1000;
-    const heightM = Number(values.height || 0) / 100;
-
-    if (weight > 0 && heightM > 0) {
-      const bmi = weight / (heightM * heightM);
-      setFieldValue("bmi", parseFloat(bmi.toFixed(2)));
-    } else {
-      setFieldValue("bmi", "");
-    }
-  };
-
   return (
     <Paper sx={{ p: 4 }}>
       <Typography variant="h6" gutterBottom>
@@ -82,130 +66,145 @@ const MultiStepFormTwo: React.FC<Props> = ({
           }
         }}
       >
-        {({ values, handleChange, setFieldValue, touched, errors }) => (
-          <Form>
-            <Box display="flex" flexDirection="column" gap={3}>
-              <TextField
-                select
-                name="vaccinationStatus"
-                label="Vaccination Status"
-                value={values.vaccinationStatus}
-                onChange={handleChange}
-                error={
-                  touched.vaccinationStatus && Boolean(errors.vaccinationStatus)
-                }
-                helperText={
-                  touched.vaccinationStatus && errors.vaccinationStatus
-                }
-              >
-                <MenuItem value="fully">Fully</MenuItem>
-                <MenuItem value="partially">Partial</MenuItem>
-                <MenuItem value="none">None</MenuItem>
-              </TextField>
+        {({ values, handleChange, setFieldValue, touched, errors }) => {
+          useEffect(() => {
+            const weight =
+              Number(values.weightKg || 0) +
+              Number(values.weightGrams || 0) / 1000;
+            const height = Number(values.height || 0) / 100;
 
-              <TextField
-                name="height"
-                label="Height (cm)"
-                type="number"
-                value={values.height}
-                onChange={(e) => {
-                  handleChange(e);
-                  setTimeout(() => calculateBMI(values, setFieldValue), 0);
-                }}
-                error={touched.height && Boolean(errors.height)}
-                helperText={touched.height && errors.height}
-              />
-              <Box display="flex" gap={2}>
+            const bmi = weight / (height * height);
+
+            if (weight && height) {
+              setFieldValue("bmi", parseFloat(bmi.toFixed(2)));
+            } else {
+              setFieldValue("bmi", "");
+            }
+          }, [values.weightKg, values.weightGrams, values.height]);
+
+          return (
+            <Form>
+              <Box display="flex" flexDirection="column" gap={3}>
                 <TextField
-                  name="weightKg"
-                  label="Weight (kg)"
-                  type="number"
-                  value={values.weightKg}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setTimeout(() => calculateBMI(values, setFieldValue), 0);
-                  }}
-                  error={touched.weightKg && Boolean(errors.weightKg)}
-                  helperText={touched.weightKg && errors.weightKg}
-                />
+                  select
+                  name="vaccinationStatus"
+                  label="Vaccination Status"
+                  value={values.vaccinationStatus}
+                  onChange={handleChange}
+                  error={
+                    touched.vaccinationStatus &&
+                    Boolean(errors.vaccinationStatus)
+                  }
+                  helperText={
+                    touched.vaccinationStatus && errors.vaccinationStatus
+                  }
+                >
+                  <MenuItem value="fully">Fully</MenuItem>
+                  <MenuItem value="partially">Partial</MenuItem>
+                  <MenuItem value="none">None</MenuItem>
+                </TextField>
+
                 <TextField
-                  name="weightGrams"
-                  label="Weight (g)"
+                  name="height"
+                  label="Height (cm)"
                   type="number"
-                  value={values.weightGrams}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setTimeout(() => calculateBMI(values, setFieldValue), 0);
-                  }}
-                  error={touched.weightGrams && Boolean(errors.weightGrams)}
-                  helperText={touched.weightGrams && errors.weightGrams}
+                  value={values.height}
+                  onChange={handleChange}
+                  slotProps={{ htmlInput: { min: 0 } }}
+                  error={touched.height && Boolean(errors.height)}
+                  helperText={touched.height && errors.height}
                 />
-              </Box>
-              <TextField
-                name="bmi"
-                label="BMI"
-                value={values.bmi}
-                InputProps={{ readOnly: true }}
-                error={touched.bmi && Boolean(errors.bmi)}
-                helperText={touched.bmi && errors.bmi}
-              />
-
-              <TextField
-                select
-                name="nutritionStatus"
-                label="Nutrition Status"
-                value={values.nutritionStatus}
-                onChange={handleChange}
-                error={
-                  touched.nutritionStatus && Boolean(errors.nutritionStatus)
-                }
-                helperText={touched.nutritionStatus && errors.nutritionStatus}
-              >
-                <MenuItem value="good">Good</MenuItem>
-                <MenuItem value="moderate">Moderate</MenuItem>
-                <MenuItem value="poor">Poor</MenuItem>
-              </TextField>
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={values.enrolledFeedingProgram}
-                    onChange={(e) =>
-                      setFieldValue("enrolledFeedingProgram", e.target.checked)
-                    }
+                <Box display="flex" gap={2}>
+                  <TextField
+                    name="weightKg"
+                    label="Weight (kg)"
+                    type="number"
+                    slotProps={{ htmlInput: { min: 0 } }}
+                    onChange={handleChange}
+                    value={values.weightKg}
+                    error={touched.weightKg && Boolean(errors.weightKg)}
+                    helperText={touched.weightKg && errors.weightKg}
                   />
-                }
-                label="Are you enrolled in a feeding program?"
-              />
+                  <TextField
+                    name="weightGrams"
+                    label="Weight (g)"
+                    type="number"
+                    slotProps={{ htmlInput: { min: 0 } }}
+                    onChange={handleChange}
+                    value={values.weightGrams}
+                    error={touched.weightGrams && Boolean(errors.weightGrams)}
+                    helperText={touched.weightGrams && errors.weightGrams}
+                  />
+                </Box>
+                <TextField
+                  name="bmi"
+                  label="BMI"
+                  value={values.bmi}
+                  disabled
+                  error={touched.bmi && Boolean(errors.bmi)}
+                  helperText={touched.bmi && errors.bmi}
+                />
 
-              <Box display="flex" justifyContent="space-between" gap={2}>
-                <Button
-                  fullWidth
-                  disabled={isPending}
-                  onClick={() => {
-                    actionRef.current = "draft";
-                  }}
-                  type="submit"
-                  variant="outlined"
+                <TextField
+                  select
+                  name="nutritionStatus"
+                  label="Nutrition Status"
+                  value={values.nutritionStatus}
+                  onChange={handleChange}
+                  error={
+                    touched.nutritionStatus && Boolean(errors.nutritionStatus)
+                  }
+                  helperText={touched.nutritionStatus && errors.nutritionStatus}
                 >
-                  Save Draft
-                </Button>
-                <Button
-                  fullWidth
-                  disabled={isPending}
-                  disableElevation
-                  onClick={() => {
-                    actionRef.current = "submit";
-                  }}
-                  type="submit"
-                  variant="contained"
-                >
-                  Submit
-                </Button>
+                  <MenuItem value="good">Good</MenuItem>
+                  <MenuItem value="moderate">Moderate</MenuItem>
+                  <MenuItem value="poor">Poor</MenuItem>
+                </TextField>
+
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={values.enrolledFeedingProgram}
+                      onChange={(e) =>
+                        setFieldValue(
+                          "enrolledFeedingProgram",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  }
+                  label="Are you enrolled in a feeding program?"
+                />
+
+                <Box display="flex" justifyContent="space-between" gap={2}>
+                  <Button
+                    fullWidth
+                    disabled={isPending}
+                    onClick={() => {
+                      actionRef.current = "draft";
+                    }}
+                    type="submit"
+                    variant="outlined"
+                  >
+                    Save Draft
+                  </Button>
+                  <Button
+                    fullWidth
+                    disabled={isPending}
+                    disableElevation
+                    onClick={() => {
+                      actionRef.current = "submit";
+                    }}
+                    type="submit"
+                    variant="contained"
+                  >
+                    Submit
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          </Form>
-        )}
+            </Form>
+          );
+        }}
       </Formik>
     </Paper>
   );

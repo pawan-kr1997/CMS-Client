@@ -3,6 +3,7 @@
 import { useFetchFormById } from "@/apis/workers";
 import {
   Box,
+  Button,
   CircularProgress,
   Container,
   Divider,
@@ -11,9 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function FormSubmitSinglePage() {
+  const router = useRouter();
   const { uuid } = useParams() as { uuid: string };
   const { data: profile, isLoading, isError } = useFetchFormById(uuid);
 
@@ -53,6 +55,13 @@ export default function FormSubmitSinglePage() {
           mb={2}
         >
           <Field label="Family ID" value={profile.family_id} />
+          <Button
+            variant="contained"
+            disableElevation
+            onClick={() => router.push("/form-submit")}
+          >
+            Back
+          </Button>
         </Box>
 
         <Divider sx={{ mb: 4 }} />

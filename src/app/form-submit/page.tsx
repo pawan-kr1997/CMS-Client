@@ -2,6 +2,7 @@
 
 import {
   Box,
+  Button,
   CircularProgress,
   Container,
   Typography,
@@ -13,8 +14,10 @@ import { useFetchForms } from "@/apis/workers";
 import ProfileCard from "@/components/common/cards/profile/ProfileCard";
 import CustomSearchInput from "@/components/common/search/CustomSearch";
 import type { Form } from "@/types";
+import { useRouter } from "next/navigation";
 
 export default function FormSubmitPage() {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const theme = useTheme();
 
@@ -57,6 +60,13 @@ export default function FormSubmitPage() {
           <Typography variant="h4" fontWeight={700} color="text.primary">
             Form Submitted
           </Typography>
+          <Button
+            variant="contained"
+            disableElevation
+            onClick={() => router.push("/")}
+          >
+            Back
+          </Button>
         </Box>
 
         <Typography variant="body1" color="text.primary" mb={4}>

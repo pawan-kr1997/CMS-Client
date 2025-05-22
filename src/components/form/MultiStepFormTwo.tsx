@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Form, Formik } from "formik";
+import { Form, Formik, useFormikContext } from "formik";
 import { useEffect, useRef } from "react";
 import * as Yup from "yup";
 import { VaccinationDetails } from "./MultiStepForm";
@@ -47,6 +47,26 @@ const MultiStepFormTwo: React.FC<Props> = ({
 }) => {
   const actionRef = useRef("submit");
 
+  const BMIWatcher = () => {
+    const { values, setFieldValue } = useFormikContext<VaccinationDetails>();
+
+    useEffect(() => {
+      const weight =
+        Number(values.weightKg || 0) + Number(values.weightGrams || 0) / 1000;
+      const height = Number(values.height || 0) / 100;
+
+      const bmi = weight / (height * height);
+
+      if (weight && height && isFinite(bmi)) {
+        setFieldValue("bmi", parseFloat(bmi.toFixed(2)));
+      } else {
+        setFieldValue("bmi", "");
+      }
+    }, [values.weightKg, values.weightGrams, values.height, setFieldValue]);
+
+    return null;
+  };
+
   return (
     <Paper sx={{ p: 4 }}>
       <Typography variant="h6" gutterBottom>
@@ -66,23 +86,9 @@ const MultiStepFormTwo: React.FC<Props> = ({
           }
         }}
       >
-        {({ values, handleChange, setFieldValue, touched, errors }) => {
-          useEffect(() => {
-            const weight =
-              Number(values.weightKg || 0) +
-              Number(values.weightGrams || 0) / 1000;
-            const height = Number(values.height || 0) / 100;
-
-            const bmi = weight / (height * height);
-
-            if (weight && height) {
-              setFieldValue("bmi", parseFloat(bmi.toFixed(2)));
-            } else {
-              setFieldValue("bmi", "");
-            }
-          }, [values.weightKg, values.weightGrams, values.height]);
-
-          return (
+        {({ values, handleChange, setFieldValue, touched, errors }) => (
+          <>
+            <BMIWatcher />
             <Form>
               <Box display="flex" flexDirection="column" gap={3}>
                 <TextField
@@ -203,8 +209,8 @@ const MultiStepFormTwo: React.FC<Props> = ({
                 </Box>
               </Box>
             </Form>
-          );
-        }}
+          </>
+        )}
       </Formik>
     </Paper>
   );
